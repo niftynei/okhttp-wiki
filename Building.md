@@ -1,12 +1,6 @@
-Building
---------
-
 OkHttp requires Java 7 to build and run tests. Runtime compatibility with Java 6 is enforced as part of the build to ensure compliance with Android and older versions of the JVM.
 
-Testing
--------
-
-### On the Desktop
+### Desktop Testing
 
 Run OkHttp tests on the desktop with Maven. Running HTTP/2 and SPDY tests on the desktop uses [Jetty-NPN][1] when running OpenJDK 7 or [Jetty-ALPN][2] when OpenJDK 8.
 
@@ -14,7 +8,7 @@ Run OkHttp tests on the desktop with Maven. Running HTTP/2 and SPDY tests on the
 mvn clean test
 ```
 
-### On a Device
+### Device Testing
 
 OkHttp's test suite creates an in-process HTTPS server. Prior to Android 2.3, SSL server sockets were broken, and so HTTPS tests will time out when run on such devices.
 
