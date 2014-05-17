@@ -14,7 +14,7 @@ Framing rules make it impractical to implement spdy/3 or http/2 correctly on a s
 
 In OkHttp we expose a blocking API over a framed protocol. This document explains the code and policy that makes that work.
 
-## Threads
+### Threads
 
 #### Application's calling thread
 
@@ -38,7 +38,7 @@ Similarly, the reader thread must never block on writing because this can deadlo
 
 Sometimes there's an action required like calling the application layer or responding to a ping, and the thread discovering the action is not the thread that should do the work. We enqueue a runnable on this executor and it gets handled by one of the executor's threads.
 
-## Locks
+### Locks
 
 We have 3 different things that we synchronize on.
 
