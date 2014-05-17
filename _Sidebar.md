@@ -6,5 +6,6 @@
 
 **Developing OkHttp**
 
- * [[Contributing]]
+ * [[Building]]
  * [[Concurrency]]
+ * [[Contributing]]
