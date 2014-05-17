@@ -1,7 +1,7 @@
-** Using OkHttp **
+**Using OkHttp**
 
  * [[Making Connections]]
 
-** Developing OkHttp
+**Developing OkHttp**
 
  * [[Concurrency]]
