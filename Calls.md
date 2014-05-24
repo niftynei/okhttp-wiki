@@ -18,18 +18,15 @@ Some requests will have a cached response. When this cached response isn’t fre
 
 #### Rewriting Responses
 
-If transparent compression was used, OkHttp will drop the
-corresponding response headers `Content-Encoding` and
-`Content-Length` because they don’t apply to the decompressed response body.
+If transparent compression was used, OkHttp will drop the corresponding response headers `Content-Encoding` and `Content-Length` because they don’t apply to the decompressed response body.
 
-If a conditional GET was successful, responses from the
-network and cache are merged as directed by the spec.
+If a conditional GET was successful, responses from the network and cache are merged as directed by the spec.
 
 #### Follow-up Requests
 
 When your requested URL has moved, the webserver will return a response code like `302` to indicate the document’s new URL. OkHttp will follow the redirect to retrieve a final response.
 
-If the response issues an authorization challenge, OkHttp will ask the `Authenticator` (if one is configured) to satisfy the challenge. If the authenticator supplies a credential, the request is retried with that credential included.
+If the response issues an authorization challenge, OkHttp will ask the [`Authenticator`](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Authenticator.html) (if one is configured) to satisfy the challenge. If the authenticator supplies a credential, the request is retried with that credential included.
 
 #### Retrying Requests
 
@@ -42,12 +39,12 @@ With rewrites, redirects, follow-ups and retries, your simple request may yield 
 Calls are executed in one of two ways:
 
  * **Synchronous:** your thread blocks until the response is readable.
- * **Asynchronous:** you enqueue the request on any thread, and get called back on another thread when the response is readable.
+ * **Asynchronous:** you enqueue the request on any thread, and get [called back](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Callback.html) on another thread when the response is readable.
 
 Calls can be canceled from any thread. This will fail the call if it hasn’t yet completed! Code that is writing the request body or reading the response body will suffer an `IOException` when its call is canceled.
 
-#### [Dispatch](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Dispatcher.html)
+#### Dispatch
 
 For synchronous calls, you bring your own thread and are responsible for managing how many simultaneous requests you make. Too many simultaneous connections wastes resources; too few harms latency.
 
-For asynchronous calls, the `Dispatcher` class implements policy for maximum simultaneous requests. You can set maximums per-webserver (default is 5), and overall (default is 64).
+For asynchronous calls, [`Dispatcher`](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Dispatcher.html) implements policy for maximum simultaneous requests. You can set maximums per-webserver (default is 5), and overall (default is 64).
