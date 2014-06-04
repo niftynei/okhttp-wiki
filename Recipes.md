@@ -6,7 +6,7 @@ Download a file, print its headers, and print its response body as a string.
 
 The `string()` method on response body is convenient and efficient for small documents. But if the response body is large (greater than 1 MiB), avoid `string()` because it will load the entire document into memory. In that case, prefer to process the body as a stream.
 
-```
+```java
   private final OkHttpClient client = new OkHttpClient();
 
   public void run() throws Exception {
@@ -30,7 +30,7 @@ The `string()` method on response body is convenient and efficient for small doc
 
 Download a file on a worker thread, and get called back when the response is readable. The callback is made after the response headers are ready. Reading the response body may still block. OkHttp doesn't currently offer asynchronous APIs to receive a response body in parts.
 
-```
+```java
   private final OkHttpClient client = new OkHttpClient();
 
   public void run() throws Exception {
@@ -61,7 +61,7 @@ Download a file on a worker thread, and get called back when the response is rea
 
 Use an HTTP POST to send a request body to a service. This example posts a markdown document to a web service that renders markdown as HTML. Because the entire request body is in memory simultaneously, avoid posting large (greater than 1 MiB) documents using this API.
 
-```
+```java
   public static final MediaType MEDIA_TYPE_MARKDOWN
       = MediaType.parse("text/x-markdown; charset=utf-8");
 
