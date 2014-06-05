@@ -273,3 +273,61 @@ You can cancel multiple requests simultaneously with tags. Assign a tag when you
     }
   }
 ```
+
+#### [Timeouts](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/ConfigureTimeouts.java)
+
+Use timeouts to fail a call when its peer is unreachable. Network partitions can be due to client connectivity problems, server availability problems, or anything between. OkHttp supports connect, read, and write timeouts.
+
+```java
+  private final OkHttpClient client;
+
+  public ConfigureTimeouts() throws Exception {
+    client = new OkHttpClient();
+    client.setConnectTimeout(10, TimeUnit.SECONDS);
+    client.setWriteTimeout(10, TimeUnit.SECONDS);
+    client.setReadTimeout(30, TimeUnit.SECONDS);
+  }
+
+  public void run() throws Exception {
+    Request request = new Request.Builder()
+        .url("http://httpbin.org/delay/2") // This URL is served with a 2 second delay.
+        .build();
+
+    Response response = client.newCall(request).execute();
+    System.out.println("Response completed: " + response);
+  }
+```
+
+#### [Per-call Configuration](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/PerCallSettings.java)
+
+All the HTTP client configuration lives in `OkHttpClient` including proxy settings, timeouts, and caches. When you need to change the configuration of a single call, clone the `OkHttpClient`. This returns a shallow copy that you can customize independently. In the example below, we make one request with a 500 ms timeout and another with a 3000 ms timeout.
+
+```java
+  private final OkHttpClient client = new OkHttpClient();
+
+  public void run() throws Exception {
+    Request request = new Request.Builder()
+        .url("http://httpbin.org/delay/1") // This URL is served with a 1 second delay.
+        .build();
+
+    try {
+      Response response = client.clone() // Clone to make a customized OkHttp for this request.
+          .setReadTimeout(500, TimeUnit.MILLISECONDS)
+          .newCall(request)
+          .execute();
+      System.out.println("Response 1 succeeded: " + response);
+    } catch (IOException e) {
+      System.out.println("Response 1 failed: " + e);
+    }
+
+    try {
+      Response response = client.clone() // Clone to make a customized OkHttp for this request.
+          .setReadTimeout(3000, TimeUnit.MILLISECONDS)
+          .newCall(request)
+          .execute();
+      System.out.println("Response 2 succeeded: " + response);
+    } catch (IOException e) {
+      System.out.println("Response 2 failed: " + e);
+    }
+  }
+```
