@@ -234,3 +234,42 @@ Response caching uses HTTP headers for all configuration. You can add request he
     System.out.println("Response 2 equals Response 1? " + response1Body.equals(response2Body));
   }
 ```
+
+#### [Canceling a Call](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CancelCall.java)
+
+Use `Call.cancel()` to stop an ongoing call immediately. If a thread is currently writing a request or reading a response, it will receive an `IOException`. Use this to conserve the network when a call is no longer necessary; for example when your user navigates away from an application. Both synchronous and asynchronous calls can be canceled.
+
+You can cancel multiple requests simultaneously with tags. Assign a tag when you build a request with `RequestBuilder.tag(tag)`. You can then use `OkHttpClient.cancel(tag)` to cancel all calls with that tag.
+
+```java
+  private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+  private final OkHttpClient client = new OkHttpClient();
+
+  public void run() throws Exception {
+    Request request = new Request.Builder()
+        .url("http://httpbin.org/delay/2") // This URL is served with a 2 second delay.
+        .build();
+
+    final long startNanos = System.nanoTime();
+    final Call call = client.newCall(request);
+
+    // Schedule a job to cancel the call in 1 second.
+    executor.schedule(new Runnable() {
+      @Override public void run() {
+        System.out.printf("%.2f Canceling call.%n", (System.nanoTime() - startNanos) / 1e9f);
+        call.cancel();
+        System.out.printf("%.2f Canceled call.%n", (System.nanoTime() - startNanos) / 1e9f);
+      }
+    }, 1, TimeUnit.SECONDS);
+
+    try {
+      System.out.printf("%.2f Executing call.%n", (System.nanoTime() - startNanos) / 1e9f);
+      Response response = call.execute();
+      System.out.printf("%.2f Call was expected to fail, but completed: %s%n",
+          (System.nanoTime() - startNanos) / 1e9f, response);
+    } catch (IOException e) {
+      System.out.printf("%.2f Call failed as expected: %s%n",
+          (System.nanoTime() - startNanos) / 1e9f, e);
+    }
+  }
+```
