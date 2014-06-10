@@ -19,10 +19,9 @@ mvn clean
 mvn package -DskipTests
 vogar \
     --classpath ~/.m2/repository/org/bouncycastle/bcprov-jdk15on/1.48/bcprov-jdk15on-1.48.jar \
-    --classpath mockwebserver/target/mockwebserver-2.0.0-SNAPSHOT.jar \
-    --classpath okhttp-protocols/target/okhttp-protocols-2.0.0-SNAPSHOT.jar \
+    --classpath ~/.m2/repository/com/squareup/okio/okio/1.0.0/okio-1.0.0.jar \
     --classpath okhttp/target/okhttp-2.0.0-SNAPSHOT.jar \
-    okhttp/src/test
+    ./samples/guide/src/main/java/com/squareup/okhttp/recipes/SynchronousGet.java
 ```
 
  [1]: https://github.com/jetty-project/jetty-npn
