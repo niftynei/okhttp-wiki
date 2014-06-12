@@ -57,6 +57,36 @@ Download a file on a worker thread, and get called back when the response is rea
   }
 ```
 
+#### [Accessing Headers](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/AccessHeaders.java)
+
+Typically HTTP headers work like a `Map<String, String>`: each field has one value or none. But some headers permit multiple values, like Guava's [Multimap](http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html). For example, it's legal and common for an HTTP response to supply multiple `Vary` headers. OkHttp's APIs attempt to make both cases comfortable.
+
+When writing request headers, use `header(name, value)` to set the only occurrence of `name` to `value`. If there are existing values, they will be removed before the new value is added. Use `addHeader(name, value)` to add a header without removing the headers already present.
+
+When reading response a header, use `header(name)` to return the _last_ occurrence of the named value. Usually this is also the only occurrence! If no value is present, `header(name)` will return null. To read all of a field's values as a list, use `headers(name)`.
+
+To visit all headers, use the `Headers` class which supports access by index.
+
+```java
+  private final OkHttpClient client = new OkHttpClient();
+
+  public void run() throws Exception {
+    Request request = new Request.Builder()
+        .url("https://api.github.com/repos/square/okhttp/issues")
+        .header("User-Agent", "OkHttp Headers.java")
+        .addHeader("Accept", "application/json; q=0.5")
+        .addHeader("Accept", "application/vnd.github.v3+json")
+        .build();
+
+    Response response = client.newCall(request).execute();
+    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+    System.out.println("Server: " + response.header("Server"));
+    System.out.println("Date: " + response.header("Date"));
+    System.out.println("Vary: " + response.headers("Vary"));
+  }
+```
+
 #### [Posting a String](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/PostString.java)
 
 Use an HTTP POST to send a request body to a service. This example posts a markdown document to a web service that renders markdown as HTML. Because the entire request body is in memory simultaneously, avoid posting large (greater than 1 MiB) documents using this API.
@@ -149,6 +179,64 @@ It's easy to use a file as a request body.
     Request request = new Request.Builder()
         .url("https://api.github.com/markdown/raw")
         .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, file))
+        .build();
+
+    Response response = client.newCall(request).execute();
+    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+    System.out.println(response.body().string());
+  }
+```
+
+#### [Posting a form](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/PostForm.java)
+
+Use `FormEncodingBuilder` to build a request body that works like an HTML `<form>` tag. Names and values will be encoded using an HTML-compatible form URL encoding.
+
+```java
+  private final OkHttpClient client = new OkHttpClient();
+
+  public void run() throws Exception {
+    RequestBody formBody = new FormEncodingBuilder()
+        .add("search", "Jurassic Park")
+        .build();
+    Request request = new Request.Builder()
+        .url("https://en.wikipedia.org/w/index.php")
+        .post(formBody)
+        .build();
+
+    Response response = client.newCall(request).execute();
+    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+    System.out.println(response.body().string());
+  }
+```
+
+#### [Posting a multipart request](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/PostMultipart.java)
+
+`MultipartBuilder` can build sophisticated request bodies compatible with HTML file upload forms. Each part of a multipart request body is itself a request body, and can define its own headers. If present, these headers should describe the part body, such as its `Content-Disposition`. The `Content-Length` and `Content-Type` headers are added automatically if they're available.
+
+```java
+  private static final String IMGUR_CLIENT_ID = "...";
+  private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+
+  private final OkHttpClient client = new OkHttpClient();
+
+  public void run() throws Exception {
+    // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
+    RequestBody requestBody = new MultipartBuilder()
+        .type(MultipartBuilder.FORM)
+        .addPart(
+            Headers.of("Content-Disposition", "form-data; name=\"title\""),
+            RequestBody.create(null, "Square Logo"))
+        .addPart(
+            Headers.of("Content-Disposition", "form-data; name=\"image\""),
+            RequestBody.create(MEDIA_TYPE_PNG, new File("website/static/logo-square.png")))
+        .build();
+
+    Request request = new Request.Builder()
+        .header("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
+        .url("https://api.imgur.com/3/image")
+        .post(requestBody)
         .build();
 
     Response response = client.newCall(request).execute();
@@ -329,5 +417,41 @@ All the HTTP client configuration lives in `OkHttpClient` including proxy settin
     } catch (IOException e) {
       System.out.println("Response 2 failed: " + e);
     }
+  }
+```
+
+#### [Handling authentication](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/Authenticate.java)
+
+OkHttp can automatically retry unauthenticated requests. When a response is `401 Not Authorized`, an `Authenticator` is asked to supply credentials. Implementations should build a new request that includes the missing credentials. If no credentials are available, return null to skip the retry.
+
+Use `Response.challenges()` to get the schemes and realms of any authentication challenges. When fulfilling a `Basic` challenge, use `Credentials.basic(username, password)` to encode the request header.
+
+```java
+  private final OkHttpClient client = new OkHttpClient();
+
+  public void run() throws Exception {
+    client.setAuthenticator(new Authenticator() {
+      @Override public Request authenticate(Proxy proxy, Response response) {
+        System.out.println("Authenticating for response: " + response);
+        System.out.println("Challenges: " + response.challenges());
+        String credential = Credentials.basic("jesse", "password1");
+        return response.request().newBuilder()
+            .header("Authorization", credential)
+            .build();
+      }
+
+      @Override public Request authenticateProxy(Proxy proxy, Response response) {
+        return null; // Null indicates no attempt to authenticate.
+      }
+    });
+
+    Request request = new Request.Builder()
+        .url("http://publicobject.com/secrets/hellosecret.txt")
+        .build();
+
+    Response response = client.newCall(request).execute();
+    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+    System.out.println(response.body().string());
   }
 ```
