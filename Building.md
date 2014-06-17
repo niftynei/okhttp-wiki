@@ -12,13 +12,15 @@ mvn clean test
 
 If you're working in an IDE, or in another environment where Maven configuration isn't honored, you'll need to manually enable NPN/ALPN. Add this JVM flag for OpenJDK 8:
 ```
--Xbootclasspath/p:~/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/8.0.0.v20140317/alpn-boot-8.0.0.v20140317.jar
+-Xbootclasspath/p:/Users/jwilson/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/8.0.0.v20140317/alpn-boot-8.0.0.v20140317.jar
 ```
 
 Add this JVM flag for OpenJDK 7:
 ```
--Xbootclasspath/p:~/.m2/repository/org/mortbay/jetty/npn/npn-boot/1.1.7.v20140316/npn-boot-1.1.7.v20140316.jar
+-Xbootclasspath/p:/Users/jwilson/.m2/repository/org/mortbay/jetty/npn/npn-boot/1.1.7.v20140316/npn-boot-1.1.7.v20140316.jar
 ```
+
+You must substitute `/Users/jwilson/.m2/repository` with the path to your Maven repository!
 
 ### Device Testing
 
