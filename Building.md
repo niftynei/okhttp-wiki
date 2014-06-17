@@ -1,11 +1,23 @@
 OkHttp requires Java 7 to build and run tests. Runtime compatibility with Java 6 is enforced as part of the build to ensure compliance with Android and older versions of the JVM.
 
-### Desktop Testing
+### Desktop Testing with Maven
 
-Run OkHttp tests on the desktop with Maven. Running HTTP/2 and SPDY tests on the desktop uses [Jetty-NPN][1] when running OpenJDK 7 or [Jetty-ALPN][2] when OpenJDK 8.
+Run OkHttp tests on the desktop with Maven. Running HTTP/2 and SPDY tests on the desktop uses [Jetty-ALPN][2] when OpenJDK 8 or [Jetty-NPN][1] when running OpenJDK 7.
 
 ```
 mvn clean test
+```
+
+### Desktop Testing without Maven
+
+If you're working in an IDE, or in another environment where Maven configuration isn't honored, you'll need to manually enable NPN/ALPN. Add this JVM flag for OpenJDK 8:
+```
+-Xbootclasspath/p:~/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/8.0.0.v20140317/alpn-boot-8.0.0.v20140317.jar
+```
+
+Add this JVM flag for OpenJDK 7:
+```
+-Xbootclasspath/p:~/.m2/repository/org/mortbay/jetty/npn/npn-boot/1.1.7.v20140316/npn-boot-1.1.7.v20140316.jar
 ```
 
 ### Device Testing
