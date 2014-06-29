@@ -1,4 +1,4 @@
-#### Verify errors in dalvikvm
+#### How do I fix verify errors in dalvikvm?
 
 OkHttp supports some APIs that require Java 7+ or Android API 20+. If you run OkHttp on earlier Android releases, dalvikvm's verifier will warn about the missing methods. This isn't a problem and you can ignore the warnings.
 
