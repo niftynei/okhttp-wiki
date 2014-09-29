@@ -39,8 +39,8 @@ Download a file on a worker thread, and get called back when the response is rea
         .build();
 
     client.newCall(request).enqueue(new Callback() {
-      @Override public void onFailure(Request request, Throwable throwable) {
-        throwable.printStackTrace();
+      @Override public void onFailure(Request request, IOException e) {
+        e.printStackTrace();
       }
 
       @Override public void onResponse(Response response) throws IOException {
