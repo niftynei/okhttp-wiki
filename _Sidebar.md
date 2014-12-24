@@ -3,6 +3,7 @@
  * [[Calls]]
  * [[Connections]]
  * [[Recipes]]
+ * [[Interceptors]]
  * Javadoc
    * [okhttp](http://square.github.io/okhttp/javadoc/index.html)
    * [okhttp-urlconnection](http://square.github.io/okhttp/javadoc-urlconnection/index.html)
