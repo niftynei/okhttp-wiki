@@ -1,23 +1,23 @@
 Interceptors are a powerful mechanism that can monitor, rewrite, and retry calls. Here's a simple interceptor that logs the outgoing request and the incoming response.
 
-```
-  class LoggingInterceptor implements Interceptor {
-    @Override public Response intercept(Chain chain) throws IOException {
-      Request request = chain.request();
+```java
+class LoggingInterceptor implements Interceptor {
+  @Override public Response intercept(Chain chain) throws IOException {
+    Request request = chain.request();
 
-      long t1 = System.nanoTime();
-      logger.info(String.format("Sending request %s on %s%n%s",
-          request.url(), chain.connection(), request.headers()));
+    long t1 = System.nanoTime();
+    logger.info(String.format("Sending request %s on %s%n%s",
+        request.url(), chain.connection(), request.headers()));
 
-      Response response = chain.proceed(request);
+    Response response = chain.proceed(request);
 
-      long t2 = System.nanoTime();
-      logger.info(String.format("Received response for %s in %.1fms%n%s",
-          response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+    long t2 = System.nanoTime();
+    logger.info(String.format("Received response for %s in %.1fms%n%s",
+        response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
-      return response;
-    }
+    return response;
   }
+}
 ```
 
 A call to `chain.proceed(request)` is a critical part of each interceptor’s implementation. This simple-looking method is where all the HTTP work happens, producing a response to satisfy the request.
@@ -30,17 +30,17 @@ Interceptors are registered as either _application_ or _network_ interceptors. W
 
 Register an _application_ interceptor by calling `add()` on the `List` returned from `OkHttpClient.interceptors()`:
 
-```
-    OkHttpClient client = new OkHttpClient();
-    client.interceptors().add(new LoggingInterceptor());
+```java
+OkHttpClient client = new OkHttpClient();
+client.interceptors().add(new LoggingInterceptor());
 
-    Request request = new Request.Builder()
-        .url("http://www.publicobject.com/helloworld.txt")
-        .header("User-Agent", "OkHttp Example")
-        .build();
+Request request = new Request.Builder()
+    .url("http://www.publicobject.com/helloworld.txt")
+    .header("User-Agent", "OkHttp Example")
+    .build();
 
-    Response response = client.newCall(request).execute();
-    response.body().close();
+Response response = client.newCall(request).execute();
+response.body().close();
 ```
 
 The URL `http://www.publicobject.com/helloworld.txt` redirects to `https://publicobject.com/helloworld.txt`, and OkHttp follows this redirect automatically. Our application interceptor is called **once** and the response returned from `chain.proceed()` has the redirected response:
@@ -62,17 +62,17 @@ We can see that we were redirected because `response.request().url()` is differe
 
 Registering a network interceptor is quite similar. Add to the `networkInterceptors()` list instead of the `interceptors()` list:
 
-```
-    OkHttpClient client = new OkHttpClient();
-    client.networkInterceptors().add(new LoggingInterceptor());
+```java
+OkHttpClient client = new OkHttpClient();
+client.networkInterceptors().add(new LoggingInterceptor());
 
-    Request request = new Request.Builder()
-        .url("http://www.publicobject.com/helloworld.txt")
-        .header("User-Agent", "OkHttp Example")
-        .build();
+Request request = new Request.Builder()
+    .url("http://www.publicobject.com/helloworld.txt")
+    .header("User-Agent", "OkHttp Example")
+    .build();
 
-    Response response = client.newCall(request).execute();
-    response.body().close();
+Response response = client.newCall(request).execute();
+response.body().close();
 ```
 
 When we run this code, the interceptor runs twice. Once for the initial request to `http://www.publicobject.com/helloworld.txt`, and another for the redirect to `https://publicobject.com/helloworld.txt`.
@@ -129,40 +129,40 @@ Each interceptor chain has relative merits.
 
 Interceptors can add, remove, or replace request headers. They can also transform the body of those requests that have one. For example, you can use an application interceptor to add request body compression if you're connecting to a webserver known to support it.
 
-```
-  /** This interceptor compresses the HTTP request body. Many webservers can't handle this! */
-  final class GzipRequestInterceptor implements Interceptor {
-    @Override public Response intercept(Chain chain) throws IOException {
-      Request originalRequest = chain.request();
-      if (originalRequest.body() == null || originalRequest.header("Content-Encoding") != null) {
-        return chain.proceed(originalRequest);
+```java
+/** This interceptor compresses the HTTP request body. Many webservers can't handle this! */
+final class GzipRequestInterceptor implements Interceptor {
+  @Override public Response intercept(Chain chain) throws IOException {
+    Request originalRequest = chain.request();
+    if (originalRequest.body() == null || originalRequest.header("Content-Encoding") != null) {
+      return chain.proceed(originalRequest);
+    }
+
+    Request compressedRequest = originalRequest.newBuilder()
+        .header("Content-Encoding", "gzip")
+        .method(originalRequest.method(), gzip(originalRequest.body()))
+        .build();
+    return chain.proceed(compressedRequest);
+  }
+
+  private RequestBody gzip(final RequestBody body) {
+    return new RequestBody() {
+      @Override public MediaType contentType() {
+        return body.contentType();
       }
 
-      Request compressedRequest = originalRequest.newBuilder()
-          .header("Content-Encoding", "gzip")
-          .method(originalRequest.method(), gzip(originalRequest.body()))
-          .build();
-      return chain.proceed(compressedRequest);
-    }
+      @Override public long contentLength() {
+        return -1; // We don't know the compressed length in advance!
+      }
 
-    private RequestBody gzip(final RequestBody body) {
-      return new RequestBody() {
-        @Override public MediaType contentType() {
-          return body.contentType();
-        }
-
-        @Override public long contentLength() {
-          return -1; // We don't know the compressed length in advance!
-        }
-
-        @Override public void writeTo(BufferedSink sink) throws IOException {
-          BufferedSink gzipSink = Okio.buffer(new GzipSink(sink));
-          body.writeTo(gzipSink);
-          gzipSink.close();
-        }
-      };
-    }
+      @Override public void writeTo(BufferedSink sink) throws IOException {
+        BufferedSink gzipSink = Okio.buffer(new GzipSink(sink));
+        body.writeTo(gzipSink);
+        gzipSink.close();
+      }
+    };
   }
+}
 ```
 
 #### Rewriting Responses
@@ -171,16 +171,16 @@ Symmetrically, interceptors can rewrite response headers and transform the respo
 
 If you're in a tricky situation and prepared to deal with the consequences, rewriting response headers is a powerful way to work around problems. For example, you can fix a server's misconfigured `Cache-Control` response header to enable better response caching:
 
-```
-  /** Dangerous interceptor that rewrites the server's cache-control header. */
-  private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
-    @Override public Response intercept(Chain chain) throws IOException {
-      Response originalResponse = chain.proceed(chain.request());
-      return originalResponse.newBuilder()
-          .header("Cache-Control", "max-age=60")
-          .build();
-    }
-  };
+```java
+/** Dangerous interceptor that rewrites the server's cache-control header. */
+private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
+  @Override public Response intercept(Chain chain) throws IOException {
+    Response originalResponse = chain.proceed(chain.request());
+    return originalResponse.newBuilder()
+        .header("Cache-Control", "max-age=60")
+        .build();
+  }
+};
 ```
 
 Typically this approach works best when it complements a corresponding fix on the webserver!
