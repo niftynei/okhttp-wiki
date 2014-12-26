@@ -322,6 +322,7 @@ Response caching uses HTTP headers for all configuration. You can add request he
     System.out.println("Response 2 equals Response 1? " + response1Body.equals(response2Body));
   }
 ```
+To prevent a response from using the cache, use [`CacheControl.FORCE_NETWORK`](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/CacheControl.html#FORCE_NETWORK). To prevent it from using the network, use [`CacheControl.FORCE_CACHE`](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/CacheControl.html#FORCE_CACHE). Be warned: if you use `FORCE_CACHE` and the response requires the network, OkHttp will return a `504 Unsatisfiable Request` response.
 
 #### [Canceling a Call](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CancelCall.java)
 
