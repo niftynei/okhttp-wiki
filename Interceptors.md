@@ -24,6 +24,8 @@ A call to `chain.proceed(request)` is a critical part of each interceptor’s im
 
 Interceptors can be chained. Suppose you have both a compressing interceptor and a checksumming interceptor: you'll need to decide whether data is compressed and then checksummed, or checksummed and then compressed. OkHttp uses lists to track interceptors, and interceptors are called in order.
 
+![Interceptors Diagram](https://raw.githubusercontent.com/wiki/square/okhttp/interceptors@2x.png)
+
 #### Application Interceptors
 
 Interceptors are registered as either _application_ or _network_ interceptors. We'll use the `LoggingInterceptor` defined above to show the difference.
