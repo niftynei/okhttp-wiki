@@ -34,7 +34,7 @@ Sometimes connections fail: either a pooled connection was stale and disconnecte
 
 #### [Calls](http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Call.html)
 
-With rewrites, redirects, follow-ups and retries, your simple request may yield many requests and responses. OkHttp uses `Call` to model the task of satisfying your request through however many intermediate requests and responses are necessary. Typically this is isn’t many! But it’s comforting to know that your code will continue to work if your URLs are redirected or if you failover to an alternate IP address.
+With rewrites, redirects, follow-ups and retries, your simple request may yield many requests and responses. OkHttp uses `Call` to model the task of satisfying your request through however many intermediate requests and responses are necessary. Typically this isn’t many! But it’s comforting to know that your code will continue to work if your URLs are redirected or if you failover to an alternate IP address.
 
 Calls are executed in one of two ways:
 
