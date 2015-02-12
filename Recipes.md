@@ -283,7 +283,7 @@ Note that `ResponseBody.charStream()` uses the `Content-Type` response header to
 
 To cache responses, you'll need a cache directory that you can read and write to, and a limit on the cache's size. The cache directory should be private, and untrusted applications should not be able to read its contents!
 
-It is an error to have multiple caches accessing the same cache directory simultaneously. Most applications should call `new OkHttp()` exactly once, configure it with their cache, and use that same instance everywhere. Otherwise the two cache instances will stomp on each other, corrupt the response cache, and possibly crash your program.
+It is an error to have multiple caches accessing the same cache directory simultaneously. Most applications should call `new OkHttpClient()` exactly once, configure it with their cache, and use that same instance everywhere. Otherwise the two cache instances will stomp on each other, corrupt the response cache, and possibly crash your program.
 
 Response caching uses HTTP headers for all configuration. You can add request headers like `Cache-Control: max-stale=3600` and OkHttp's cache will honor them. Your webserver configures how long responses are cached with its own response headers, like `Cache-Control: max-age=9600`. There are cache headers to force a cached response, force a network response, or force the network response to be validated with a conditional GET.
 
