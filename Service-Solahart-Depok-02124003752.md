@@ -1,4 +1,4 @@
-Service SOLAHART Pemanas Air Hp 081905220200 layanan Service Pemanas Air call (021) 9138-9699 demi kepuasan pelanggan customer kami Kami Telah Menyediakan pelayanan Teknisi Khusus Pemanas Air Untuk Melayani Service Perawatan, Pemasangan Baru, Bongkar Pasang, Pemindahan Unit.Serta Siap Menangani Masalah Pemanas Air Tenaga Surya Anda !
+Service SOLAHART Pemanas Air Hp 081310944049 layanan Service Pemanas Air call (021)95003749 demi kepuasan pelanggan customer kami Kami Telah Menyediakan pelayanan Teknisi Khusus Pemanas Air Untuk Melayani Service Perawatan, Pemasangan Baru, Bongkar Pasang, Pemindahan Unit.Serta Siap Menangani Masalah Pemanas Air Tenaga Surya Anda !
 
 BERKALA LAYANAN A Mesin Pemanas Air Tidak Panas, Tekanan Air Kurang Kencang B. Pemasangan Titik Air Panas/ Instalasi Pipa Air Panas C. Pemasangan Titik Air Dingin/ Instalasi Air Dingin D. Penggantian Sparepart,Element,Termorstat, Cek Valve Dll. E. Jasa Penurunan Unit/ Bongkar Pasang F. Jasa Penaikan Unit/ Bongkar Pasang
 
