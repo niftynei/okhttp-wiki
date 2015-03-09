@@ -400,20 +400,20 @@ All the HTTP client configuration lives in `OkHttpClient` including proxy settin
         .build();
 
     try {
-      Response response = client.clone() // Clone to make a customized OkHttp for this request.
-          .setReadTimeout(500, TimeUnit.MILLISECONDS)
-          .newCall(request)
-          .execute();
+      OkHttpClient cloned = client.clone(); // Clone to make a customized OkHttp for this request.
+      cloned.setReadTimeout(500, TimeUnit.MILLISECONDS);
+
+      Response response = cloned.newCall(request).execute();
       System.out.println("Response 1 succeeded: " + response);
     } catch (IOException e) {
       System.out.println("Response 1 failed: " + e);
     }
 
     try {
-      Response response = client.clone() // Clone to make a customized OkHttp for this request.
-          .setReadTimeout(3000, TimeUnit.MILLISECONDS)
-          .newCall(request)
-          .execute();
+      OkHttpClient cloned = client.clone(); // Clone to make a customized OkHttp for this request.
+      cloned.setReadTimeout(3000, TimeUnit.MILLISECONDS);
+
+      Response response = cloned.newCall(request).execute();
       System.out.println("Response 2 succeeded: " + response);
     } catch (IOException e) {
       System.out.println("Response 2 failed: " + e);
