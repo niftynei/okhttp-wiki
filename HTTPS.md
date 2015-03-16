@@ -62,9 +62,9 @@ Use [CertificatePinner](http://square.github.io/okhttp/javadoc/com/squareup/okht
   }
 ```
 
-#### Customizing Trusted Certificates
+#### [Customizing Trusted Certificates](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CustomTrust.java)
 
-The [CustomTrust](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CustomTrust.java) sample shows how to replace the host platform’s certificate authorities with your own set. As above, **do not use custom certificates without the blessing of your server's TLS administrator!**
+The full code sample shows how to replace the host platform’s certificate authorities with your own set. As above, **do not use custom certificates without the blessing of your server's TLS administrator!**
 
 ```
   private final OkHttpClient client;
