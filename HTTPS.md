@@ -30,7 +30,7 @@ OkHttpClient client = ...
 client.setConnectionSpecs(Collections.singletonList(spec));
 ```
 
-### [Certificate Pinning](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CertificatePinning.java)
+#### [Certificate Pinning](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CertificatePinning.java)
 
 By default, OkHttp trusts the certificate authorities of the host platform. This strategy maximizes connectivity, but it is subject to certificate authority attacks such as the [2011 attack](http://www.computerworld.com/article/2510951/cybercrime-hacking/hackers-spied-on-300-000-iranians-using-fake-google-certificate.html) on DigiNotar. It also assumes your HTTPS servers’ certificates are signed by a certificate authority.
 
@@ -62,7 +62,7 @@ Use [CertificatePinner](http://square.github.io/okhttp/javadoc/com/squareup/okht
   }
 ```
 
-### Customizing Trusted Certificates
+#### Customizing Trusted Certificates
 
 The [CustomTrust](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CustomTrust.java) sample shows how to replace the host platform’s certificate authorities with your own set. As above, **do not use custom certificates without the blessing of your server's TLS administrator!**
 
