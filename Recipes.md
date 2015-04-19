@@ -456,3 +456,31 @@ Use `Response.challenges()` to get the schemes and realms of any authentication 
     System.out.println(response.body().string());
   }
 ```
+
+To avoid making many retries when authentication isn't working, you can return null to give up. For example, you may want to skip the retry when these exact credentials have already been attempted:
+
+```java
+  if (credential.equals(response.request().header("Authorization"))) {
+    return null; // If we already failed with these credentials, don't retry.
+   }
+```
+
+You may also skip the retry when you’ve hit an application-defined attempt limit:
+
+```java
+  if (responseCount(response) >= 3) {
+    return null; // If we've failed 3 times, give up.
+  }
+```
+
+This above code relies on this `responseCount()` method:
+
+```java
+  private int responseCount(Response response) {
+    int result = 1;
+    while ((response = response.priorResponse()) != null) {
+      result++;
+    }
+    return result;
+  }
+```
