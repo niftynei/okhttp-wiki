@@ -188,7 +188,7 @@ It's easy to use a file as a request body.
   }
 ```
 
-#### [Posting a form](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/PostForm.java)
+#### [Posting a form with parameters](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/PostForm.java)
 
 Use `FormEncodingBuilder` to build a request body that works like an HTML `<form>` tag. Names and values will be encoded using an HTML-compatible form URL encoding.
 
